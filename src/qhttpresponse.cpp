@@ -143,3 +143,9 @@ void QHttpResponse::end(const QString &data)
     deleteLater();
     // TODO: end connection and delete ourselves
 }
+
+qint64 QHttpResponse::bytesToWrite()
+{
+    return m_connection->bytesToWrite();
+}
+

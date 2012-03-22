@@ -98,6 +98,7 @@ void QHttpConnection::flush()
 void QHttpConnection::responseDone()
 {
     QHttpResponse *response = qobject_cast<QHttpResponse*>(QObject::sender());
+    QObject::disconnect(m_socket, SIGNAL(bytesWritten(qint64))), response, SIGNAL(bytesWritten(qint64));
     if( response->m_last )
     {
         m_socket->disconnectFromHost();
@@ -150,6 +151,7 @@ int QHttpConnection::HeadersComplete(http_parser *parser)
         response->m_keepAlive = false;
 
     connect(response, SIGNAL(done()), theConnection, SLOT(responseDone()));
+    connect(theConnection->m_socket, SIGNAL(bytesWritten(qint64)), response, SIGNAL(bytesWritten(qint64)));
 
     // we are good to go!
     emit theConnection->newRequest(theConnection->m_request, response);
@@ -243,4 +245,9 @@ int QHttpConnection::Body(http_parser *parser, const char *at, size_t length)
 
     emit theConnection->m_request->data(QByteArray(at, length));
     return 0;
+}
+
+qint64 QHttpConnection::bytesToWrite()
+{
+    return m_socket->bytesToWrite();
 }

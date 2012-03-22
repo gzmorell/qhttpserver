@@ -93,6 +93,8 @@ public slots:
      */
     void setHeader(const QString &field, const QString &value);
 
+    qint64 bytesToWrite();
+
 signals:
     /*!
      * Emitted once the response is finished.
@@ -101,6 +103,8 @@ signals:
      * is scheduled for deletion at any time.
      */
     void done();
+
+    void bytesWritten(qint64);
 
 private:
     QHttpResponse(QHttpConnection *connection);
